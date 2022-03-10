@@ -1,10 +1,37 @@
+import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react'
+import { StyleSheet, Text, View, Button, TextInput} from 'react-native';
 
 export default function App() {
+  const [city, onChangeCity] = React.useState('Toulouse')
+
+  async function WeatherCall(city) {
+      await axios.get('https://api.openweathermap.org/data/2.5/weather?', {
+          params: {
+              q: city,
+              appid: '09a46f658e613966965f960af56c9ca5'
+          }
+      })
+      .then (function(reponse) {
+          console.log(reponse.data)
+      })
+      .catch (function (error) {
+          console.log(error)
+      })
+  }
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+      <TextInput
+        onChangeText={onChangeCity}
+        value={city}
+        placeholder="City"
+      />
+      <Button
+        title="Press me"
+        onPress={(e) => WeatherCall(city)}
+      />
+
       <StatusBar style="auto" />
     </View>
   );
@@ -13,7 +40,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'orange',
     alignItems: 'center',
     justifyContent: 'center',
   },
