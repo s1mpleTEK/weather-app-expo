@@ -5,6 +5,7 @@ import { StyleSheet, Text, View, Button, TextInput} from 'react-native';
 
 export default function App() {
   const [city, onChangeCity] = React.useState('Toulouse')
+  const [main, onChangeMain] = React.useState('')
 
   async function WeatherCall(city) {
       await axios.get('https://api.openweathermap.org/data/2.5/weather?', {
@@ -15,6 +16,7 @@ export default function App() {
       })
       .then (function(reponse) {
           console.log(reponse.data)
+          onChangeMain(reponse.data.weather[0].main)
       })
       .catch (function (error) {
           console.log(error)
@@ -27,6 +29,7 @@ export default function App() {
         value={city}
         placeholder="City"
       />
+      <Text>{main}</Text>
       <Button
         title="Press me"
         onPress={(e) => WeatherCall(city)}
