@@ -4,18 +4,20 @@ import React from 'react'
 import { StyleSheet, Text, View, Button, TextInput, Image} from 'react-native';
 
 export default function App() {
-  const [city, onChangeCity] = React.useState('Toulouse')
+  const [city, onChangeCity] = React.useState('')
   const [weather, onChangeWeather] = React.useState({
     main: '',
     description:'',
     icon:'',
     city:'',
     contry:'',
-    date:'',
-    temperature:''
+    temperature:'',
+    min: '',
+    max:''
   })
 
-  async function WeatherCall(city) {
+  async function WeatherCall() {
+    console.log(city)
       await axios.get('https://api.openweathermap.org/data/2.5/weather?', {
           params: {
               q: city,
@@ -31,34 +33,55 @@ export default function App() {
             icon:reponse.data.weather[0].icon,
             city:reponse.data.name,
             contry:reponse.data.sys.country,
-            date:reponse.data.dt,
-            temperature:reponse.data.main.temp
+            temperature:parseFloat(reponse.data.main.temp).toFixed()+"°",
+            min:"Min. "+parseFloat(reponse.data.main.temp_min).toFixed()+"°",
+            max:"Max. "+parseFloat(reponse.data.main.temp_max).toFixed()+"°"
           })
       })
       .catch (function (error) {
           console.log(error)
       })
   }
+
   return (
     <View style={styles.container}>
-      <TextInput
-        onChangeText={onChangeCity}
-        value={city}
-        placeholder="City"
-      />
-      <Text>{weather.contry}</Text>
-      <Text>{weather.city}</Text>
-      <Image source={{uri:'http://openweathermap.org/img/wn/'+weather.icon+'@2x.png'}} style={{width: 100, height:100}}/>
-      <Text>{weather.date}</Text>
-      <Text>{weather.main}</Text>
-      <Text>{weather.description}</Text>
-      <Text>{weather.temperature}</Text>
-      <Button
-        title="Press me"
-        onPress={(e) => WeatherCall(city)}
-      />
+      <View style={styles.header}>
+        <TextInput
+          style={{
+            height: 40,
+            borderColor: 'white',
+            borderWidth: 1,
+            color:'#595959',
+            backgroundColor: 'white',
+            fontSize:20, 
+            paddingHorizontal: 10,
+            flex:1,
+            borderTopLeftRadius:10,
+            borderBottomLeftRadius:10,
+          }}
+          onChangeText={onChangeCity}
+          value = {city}
+          placeholder="Search your city"
+        />  
+        <Button
+          title="Search"
+          color="#AF1B3F"
+          onPress={(e) => WeatherCall()}
+        />
+      </View>
+      <View style={styles.title}>
+        <Text style={{fontSize:50, color: 'white'}}>{weather.contry}</Text>
+        <Text style={{fontSize:70, textAlign:'center', color:'white'}}>{weather.city}</Text>
+      </View>
+      <View style={styles.main}>
+        <Image source={{uri:'http://openweathermap.org/img/wn/'+weather.icon+'@2x.png'}} style={{width: 200, height:200}}/>
+        <Text style={{fontSize:50, color: 'white'}}>{weather.main}</Text>
+        <Text style={{fontSize:25, color: 'white'}}>{weather.description}</Text>
+        <Text style={{fontSize:50, color: 'white'}}>{weather.temperature}</Text>
+        <Text style={{fontSize:25, color: 'white'}}>{weather.max} {weather.min}</Text>
+      </View>
 
-      <StatusBar style="auto" />
+      <StatusBar hidden/>
     </View>
   );
 }
@@ -66,8 +89,23 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'orange',
+    backgroundColor: '#1B1F3B',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
+  header: {
+    // backgroundColor:'red',
+    flexDirection:'row',
+    marginTop:30,
+    marginHorizontal: 20,
+    marginBottom:30
+  },
+  title: {
+    // backgroundColor:'yellow',
+    alignItems: 'center',
+  },
+  main: {
+    // backgroundColor:'purple',
+    alignItems:'center'
+  }
 });
