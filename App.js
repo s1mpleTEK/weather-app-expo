@@ -26,7 +26,6 @@ export default function App() {
           }
       })
       .then (function(reponse) {
-          console.log(reponse.data)
           onChangeWeather({
             main:reponse.data.weather[0].main,
             description:reponse.data.weather[0].description,
